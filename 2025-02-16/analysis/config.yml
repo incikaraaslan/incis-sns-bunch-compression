@@ -1,0 +1,11 @@
+beam:
+  kin_energy: 1.300e+09  # [eV]
+  mass: 0.938272029e+09  # [eV / c^2]
+
+ring:
+  length: 248.00935225472526  # [m]
+
+bcm:
+  sample_freq: 1.00e+08  # [1/s]
+  delay: 1.01e-04  # time before first turn (estimate) [s]
+  nturns: 1200

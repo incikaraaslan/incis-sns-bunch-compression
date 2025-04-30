@@ -159,7 +159,7 @@ for idx, z_data in enumerate(stored_z_vals):
     turn = idx * 50
 
     # SIMULATION
-    hist, bin_edges = np.histogram(z_data, bins=70, range=(-0.5 * lattice.getLength(), 0.5 * lattice.getLength()))
+    hist, bin_edges = np.histogram(z_data, bins=64, range=(-0.5 * lattice.getLength(), 0.5 * lattice.getLength()))
     coords_sim = 0.5 * (bin_edges[:-1] + bin_edges[1:])  # Bin centers
 
     # Normalize Simulation Values
@@ -208,6 +208,6 @@ for idx, z_data in enumerate(stored_z_vals):
     ax.legend(loc="upper right", fontsize="x-small")
     
     """ax.plot(coords, exp_values, color="black", alpha=1.0)"""
-    plt.savefig(f"./outputs/simout/aligned_fig_{args.experiment}_{args.case}_turn_profile_{turn}_macros_{args.macros_per_turn}_energy_{args.energy}_bins_70.png")
+    plt.savefig(f"./outputs/simout/aligned_fig_{args.experiment}_{args.case}_turn_profile_{turn}_macros_{args.macros_per_turn}_energy_{args.energy}_bins_64.png")
     print(f"Done {turn:04.0f}")
     plt.close()

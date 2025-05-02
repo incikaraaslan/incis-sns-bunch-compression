@@ -1,8 +1,8 @@
 """Process BCM data.
 
 Usage:
-    python 00_proc_bcm.py --experiment=exp01 --filename=ring-bcm/RingBCM_250216_104155.txt
-    python 00_proc_bcm.py --experiment exp01 --filename ring-bcm/RingBCM_250216_104155.txt
+    python 00_proc_bcm.py --experiment=exp01 --filename=ring_bcm/RingBCM_250216_104155.txt
+    python 00_proc_bcm.py --experiment exp01 --filename ring_bcm/RingBCM_250216_104155.txt
 """
 import argparse
 import math
@@ -19,13 +19,12 @@ from scipy.constants import speed_of_light
 
 from tools.bcm import load_bcm_waveform
 from tools.bcm import interpolate_bcm_waveform
-from tools.plotting import set_mpl_style
 from tools.utils import coords_to_edges
 from tools.utils import edges_to_coords
 from tools.utils import get_relativistic_factors
 
 
-set_mpl_style()
+plt.style.use("style.mplstyle")
 
 
 # Parse arguments
@@ -91,7 +90,6 @@ plt.close("all")
 
 # Since the sampling frequency is an integer multiple of the beam revolution frequency,
 # interpolate the waveform onto a new time grid.
-
 samp_per_turn = int(bcm_samp_per_turn + 1)
 t_start = cfg.bcm.delay + 0.13e-06
 t_step = turn_period / samp_per_turn
@@ -150,7 +148,7 @@ for index, turn in enumerate(turns):
 
 # Force positive signals by subtracting global min
 profiles = np.array(profiles)
-profiles = profiles + np.min(profiles)
+profiles = profiles - np.min(profiles)
 
 # Create xarray
 profiles = xr.DataArray(profiles, dims=["turn", "z"], coords=[turns, coords_z])

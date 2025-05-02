@@ -49,7 +49,7 @@ parser.add_argument("--turn-step", type=int, default=50, help="number of turns t
 parser.add_argument("--turn-start", type=int, default=0)
 
 # Make the energy spread configurable during runtime #
-parser.add_argument("--energy-spread", type=float, default=0.0005, help="Energy spread standard deviation [GeV]")
+parser.add_argument("--energy-spread", type=float, default=0.001, help="Energy spread standard deviation [GeV]")
 parser.add_argument("--pulse-width", type=float, default=(36.0 / 64.0), help="Normalized pulse width")
 parser.add_argument("--inject-turns", type=int, default=300, help="Number of turns to inject particles")
 
@@ -175,13 +175,6 @@ for idx, z_data in enumerate(stored_z_vals):
         hist = hist / hist_sum  # Normalize total sum to 1
     hist = hist / (coords_sim[1] - coords_sim[0])  # Normalize by bin width
     
-    """ax.plot(bin_edges[:-1], hist, color="red", linestyle='dashed', alpha=1.0)
-    ax.set_xlim(-0.5 * lattice.getLength(), 0.5 * lattice.getLength())
-    ax.set_yticklabels([])
-    ax.annotate(f"Turn={turn}", xy=(0.02, 0.92), xycoords="axes fraction")
-    ax.set_ylabel(r"Turn $\rightarrow$")
-    ax.set_xlabel("z [m]")"""
-    
     # EXPERIMENT
     # --------------------------------------------------------------------------------------
     exp_values = profiles[turn].copy()
@@ -193,6 +186,9 @@ for idx, z_data in enumerate(stored_z_vals):
     if exp_values_sum > 0.0:
         exp_values = exp_values / exp_values_sum
     exp_values = exp_values / (coords[1] - coords[0])
+    
+    # Subtract negative offsets that weren't removed
+    exp_values = np.clip(exp_values, a_min=0.0, a_max=None)
     
     # === CENTER ALIGNMENT ===
     def find_center(z, intensity):
@@ -208,13 +204,12 @@ for idx, z_data in enumerate(stored_z_vals):
     ax.plot(coords, exp_values, color="black", alpha=1.0, label="Experiment")
 
     ax.set_xlim(-0.5 * lattice.getLength(), 0.5 * lattice.getLength())
-    ax.set_yticklabels([])
     ax.annotate(f"Turn={turn}", xy=(0.02, 0.92), xycoords="axes fraction")
-    ax.set_ylabel("Probability Density (arbitrary units)")
+    ax.set_ylabel("Probability Density [1/m]")
     ax.set_xlabel("z [m]")
     ax.legend(loc="upper right", fontsize="x-small")
     
     """ax.plot(coords, exp_values, color="black", alpha=1.0)"""
-    plt.savefig(f"./outputs/scsimsout/fig_{args.experiment}_{args.case}_turn_profile_{turn:04.0f}_macros_{args.macros_per_turn}_energy_{args.energy}_bins_64.png")
+    plt.savefig(f"./outputs/scsimsout/tryfig_{args.experiment}_{args.case}_turn_profile_{turn:04.0f}_macros_{args.macros_per_turn}_energy_{args.energy}_spread_{args.energy_spread}_bins_64.png")
     print(f"Done {turn:04.0f}")
     plt.close()

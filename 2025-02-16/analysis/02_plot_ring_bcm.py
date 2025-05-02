@@ -17,13 +17,12 @@ from omegaconf import OmegaConf
 from omegaconf import DictConfig
 from scipy.constants import speed_of_light
 
-from tools.plotting import set_mpl_style
 from tools.utils import coords_to_edges
 from tools.utils import edges_to_coords
 from tools.utils import get_relativistic_factors
 
 
-set_mpl_style()
+plt.style.use("style.mplstyle")
 
 
 # Setup
@@ -34,7 +33,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--experiment", type=str)
 parser.add_argument("--turn-start", type=int, default=100)
 parser.add_argument("--turn-step", type=int, default=50)
-parser.add_argument("--offset-scale", type=float, default=4.0)
+parser.add_argument("--offset-scale", type=float, default=0.05)
 args = parser.parse_args()
 
 # Create output directory
@@ -52,6 +51,23 @@ print(OmegaConf.to_yaml(cfg))
 
 filename = os.path.join("outputs/00_proc_ring_bcm", args.experiment, "profiles.nc")
 profiles = xr.open_dataarray(filename)
+
+
+# Plot integrated signal vs. time [units?]
+# --------------------------------------------------------------------------------------
+
+integrated_signal = profiles.sum("z")
+
+fig, ax = plt.subplots(figsize=(4, 3))
+ax.plot(profiles.coords["turn"], integrated_signal, color="black")
+ax.set_xlabel("Turn")
+ax.set_ylabel("Integrated signal [units?]")
+
+filename = os.path.join(output_dir, f"fig_signal")
+print(filename)
+plt.savefig(filename)
+plt.close("all")
+
 
 
 # Plot individual profiles
@@ -86,18 +102,16 @@ profiles_sub = np.copy(profiles[turns, :])
 for i, values in enumerate(profiles_sub):
     values_sum = np.sum(values)
     if values_sum > 0.0:
-        values = values / values_sum
-    print(coords)
-    values = values / (coords[1] - coords[0])
+        values = values / values_sum / (coords[1] - coords[0])
     profiles_sub[i] = np.copy(values)
 
 fig, ax = plt.subplots(figsize=(2.5, 3.0))
 for turn, values in zip(turns, profiles_sub):
     frac = turn / turns[-1]
-    offset = frac * np.max(profiles_sub) * args.offset_scale
+    offset = frac * args.offset_scale
     ax.plot(coords, values + offset, color="black", alpha=1.0)
 
-"""ax.set_xlim(-124.0, 124.0)
+ax.set_xlim(-124.0, 124.0)
 ax.set_yticklabels([])
 ax.set_ylabel(r"Time $\rightarrow$")
 ax.set_xlabel("z [m]")
@@ -122,4 +136,4 @@ ax.set_ylabel("Turn")
 filename = os.path.join(output_dir, "fig_profiles_waterfall_pcolor")
 print(filename)
 plt.savefig(filename)
-plt.close("all")"""
+plt.close("all")

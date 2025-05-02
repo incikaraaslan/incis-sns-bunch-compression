@@ -14,7 +14,8 @@ from pprint import pprint
 import matplotlib.pyplot as plt
 import numpy as np
 
-from tools.plotting import set_mpl_style
+
+plt.style.use("style.mplstyle")
 
 
 # Setup
@@ -29,9 +30,6 @@ args = parser.parse_args()
 path = pathlib.Path(__file__)
 output_dir = os.path.join("outputs", path.stem, args.experiment)
 os.makedirs(output_dir, exist_ok=True)
-
-# Plot settings
-set_mpl_style()
 
 
 # Load data

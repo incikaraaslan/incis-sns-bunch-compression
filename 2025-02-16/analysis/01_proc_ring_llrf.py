@@ -33,7 +33,7 @@ def get_filename(cav_name: str, signal_name: str) -> np.ndarray:
 
 input_dir = "../data"
 input_dir = os.path.join(input_dir, args.experiment)
-input_dir = os.path.join(input_dir, "ring-llrf")
+input_dir = os.path.join(input_dir, "ring_llrf")
 filenames = os.listdir(input_dir)
 
 # Save pickled

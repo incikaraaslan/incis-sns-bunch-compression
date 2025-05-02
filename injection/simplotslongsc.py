@@ -45,11 +45,11 @@ parser.add_argument("--energy", type=float, default=1.300, help="kinetic energy 
 parser.add_argument("--rf-voltage1", type=float, default=0.0, help="h=1 rf voltage1 [kV]")
 parser.add_argument("--rf-voltage2", type=float, default=0.0, help="h=1 rf voltage2 [kV]")
 parser.add_argument("--turns", type=int, default=1000, help="number of turns to track")
-parser.add_argument("--turn-step", type=int, default=100, help="number of turns to plot in waterfall")
+parser.add_argument("--turn-step", type=int, default=50, help="number of turns to plot in waterfall")
 parser.add_argument("--turn-start", type=int, default=0)
 
 # Make the energy spread configurable during runtime #
-parser.add_argument("--energy-spread", type=float, default=0.0008, help="Energy spread standard deviation [GeV]")
+parser.add_argument("--energy-spread", type=float, default=0.0005, help="Energy spread standard deviation [GeV]")
 parser.add_argument("--pulse-width", type=float, default=(36.0 / 64.0), help="Normalized pulse width")
 parser.add_argument("--inject-turns", type=int, default=300, help="Number of turns to inject particles")
 
@@ -93,7 +93,7 @@ model.set_bunch(bunch)
 model.add_longitudinal_spacecharge_node(
     b_over_a=(10.0 / 3.0),
     n_macros_min=1000,
-    n_bins=64,
+    n_bins=70,
     position=124.0,  # or whatever longitudinal position you'd like in meters
     impedance=None   # defaults to zero impedance
 )
@@ -194,13 +194,6 @@ for idx, z_data in enumerate(stored_z_vals):
         exp_values = exp_values / exp_values_sum
     exp_values = exp_values / (coords[1] - coords[0])
     
-    # Subtract negative offsets that weren't removed
-    exp_values = np.clip(exp_values, a_min=0.0, a_max=None)
-    """min_val = exp_values.min()
-    if min_val < -1e-3:  # adjust threshold as appropriate
-        exp_values = exp_values - min_val"""
-
-    
     # === CENTER ALIGNMENT ===
     def find_center(z, intensity):
         return np.sum(z * intensity) / np.sum(intensity)
@@ -215,12 +208,13 @@ for idx, z_data in enumerate(stored_z_vals):
     ax.plot(coords, exp_values, color="black", alpha=1.0, label="Experiment")
 
     ax.set_xlim(-0.5 * lattice.getLength(), 0.5 * lattice.getLength())
+    ax.set_yticklabels([])
     ax.annotate(f"Turn={turn}", xy=(0.02, 0.92), xycoords="axes fraction")
-    ax.set_ylabel("Probability Density [1/m]")
-    ax.set_xlabel("z [m]") # t [s] -> z [m] to convert this to z [m] units
+    ax.set_ylabel("Probability Density (arbitrary units)")
+    ax.set_xlabel("z [m]")
     ax.legend(loc="upper right", fontsize="x-small")
     
     """ax.plot(coords, exp_values, color="black", alpha=1.0)"""
-    plt.savefig(f"./outputs/scsimsout/tryfig_{args.experiment}_{args.case}_turn_profile_{turn:04.0f}_macros_{args.macros_per_turn}_energy_{args.energy}_spread_{args.energy_spread}_bins_64.png")
+    plt.savefig(f"./outputs/scsimsout/fig_{args.experiment}_{args.case}_turn_profile_{turn:04.0f}_macros_{args.macros_per_turn}_energy_{args.energy}_bins_64.png")
     print(f"Done {turn:04.0f}")
     plt.close()

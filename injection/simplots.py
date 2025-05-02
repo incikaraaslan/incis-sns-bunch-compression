@@ -187,6 +187,9 @@ for idx, z_data in enumerate(stored_z_vals):
         exp_values = exp_values / exp_values_sum
     exp_values = exp_values / (coords[1] - coords[0])
     
+    """# Subtract negative offsets that weren't removed
+    exp_values = exp_values / exp_values.min()"""
+    
     # === CENTER ALIGNMENT ===
     def find_center(z, intensity):
         return np.sum(z * intensity) / np.sum(intensity)
@@ -201,13 +204,12 @@ for idx, z_data in enumerate(stored_z_vals):
     ax.plot(coords, exp_values, color="black", alpha=1.0, label="Experiment")
 
     ax.set_xlim(-0.5 * lattice.getLength(), 0.5 * lattice.getLength())
-    ax.set_yticklabels([])
     ax.annotate(f"Turn={turn}", xy=(0.02, 0.92), xycoords="axes fraction")
-    ax.set_ylabel("Probability Density (arbitrary units)")
+    ax.set_ylabel("Probability Density [1/m]")
     ax.set_xlabel("z [m]")
     ax.legend(loc="upper right", fontsize="x-small")
     
     """ax.plot(coords, exp_values, color="black", alpha=1.0)"""
-    plt.savefig(f"./outputs/simout/aligned_fig_{args.experiment}_{args.case}_turn_profile_{turn}_macros_{args.macros_per_turn}_energy_{args.energy}_bins_64.png")
+    plt.savefig(f"./outputs/simout/subaligned_fig_{args.experiment}_{args.case}_turn_profile_{turn}_macros_{args.macros_per_turn}_energy_{args.energy}_spread_{args.energy_spread}_bins_64.png")
     print(f"Done {turn:04.0f}")
     plt.close()

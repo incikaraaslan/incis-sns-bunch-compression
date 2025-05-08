@@ -141,6 +141,7 @@ histo = BunchHistogram2D(
 )
 
 stored_z_vals = []
+stored_de_vals = []
 
 # Track bunch
 for turn in trange(args.turns + 1):       # args.turns + 1
@@ -160,8 +161,11 @@ for turn in trange(args.turns + 1):       # args.turns + 1
         # Extract phase space variables
         z_vals = [bunch.z(i) for i in range(bunch.getSize())]
         stored_z_vals.append([z_vals])  # Append to cumulative storage
+        de_vals = [bunch.dE(i) for i in range(bunch.getSize())]
+        stored_de_vals.append([de_vals])
 
 # Turn by Turn Plot
+"""
 for idx, z_data in enumerate(stored_z_vals):
     fig, ax = plt.subplots(figsize=(3.0, 5.0))
     turn = idx * 50
@@ -209,7 +213,52 @@ for idx, z_data in enumerate(stored_z_vals):
     ax.set_xlabel("z [m]")
     ax.legend(loc="upper right", fontsize="x-small")
     
-    """ax.plot(coords, exp_values, color="black", alpha=1.0)"""
     plt.savefig(f"./outputs/scsimsout/tryfig_{args.experiment}_{args.case}_turn_profile_{turn:04.0f}_macros_{args.macros_per_turn}_energy_{args.energy}_spread_{args.energy_spread}_bins_64.png")
+    print(f"Done {turn:04.0f}")
+    plt.close()
+"""
+# Turn by Turn Plot 2
+for idx, de_data in enumerate(stored_de_vals):
+    fig, ax = plt.subplots(1,2, figsize=(12.0, 5.0))
+    turn = idx * 50
+    z_data = stored_z_vals[idx]
+    
+    # SIMULATION
+    # --------------------------------------------------------------------------------------
+    ax[0].scatter(z_data, de_data, s=2, alpha=0.5)
+    ax[0].set_xlabel("z [m]")
+    ax[0].set_ylabel("ΔE [GeV]")
+    ax[0].set_title(f"Simulation Longitudinal Phase Space (Turn {turn})")
+    
+    ax[1].hist(de_vals, bins=64, alpha=0.7, color='b', edgecolor='black') # Histogram of ΔE
+    ax[1].set_xlabel("ΔE [GeV]")
+    ax[1].set_ylabel("Count")
+    ax[1].set_title(f"Simulation Energy Spread Histogram (Turn {turn})")
+    
+    # EXPERIMENT
+    # --------------------------------------------------------------------------------------
+    """exp_values = profiles[turn].copy()
+    print("Dimensions:", profiles.dims)
+    print("Coordinates:", profiles.coords.keys())
+    print("Attributes:", profiles.attrs)
+
+    
+    coords = profiles.coords["z"]
+    energies = profiles.coords["de"]
+    edges = coords_to_edges(coords)
+    
+    ax[0,1].scatter(coords, energies, s=1, alpha=0.5)
+    ax[0,1].set_xlabel("z [m]")
+    ax[0,1].set_ylabel("ΔE [GeV]")
+    ax[0,1].set_title(f"Experiment ({args.experiment}) Longitudinal Phase Space (Turn {turn})")
+    
+    ax[1,1].hist(energies, bins=64, alpha=0.7, color='b', edgecolor='black') # Histogram of ΔE
+    ax[1,1].set_xlabel("ΔE [GeV]")
+    ax[1,1].set_ylabel("Count")
+    ax[1,1].set_title(f"Experiment ({args.experiment}) Energy Spread Histogram (Turn {turn})")"""
+    
+    
+    
+    plt.savefig(f"./outputs/phasesp/fig_{args.experiment}_{args.case}_turn_phase_{turn:04.0f}_macros_{args.macros_per_turn}_energy_{args.energy}_spread_{args.energy_spread}_bins_64.png")
     print(f"Done {turn:04.0f}")
     plt.close()

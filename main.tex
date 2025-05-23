@@ -1,0 +1,111 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath} % AMS Math Package
+\usepackage{amsthm} % Theorem Formatting
+\usepackage{amssymb} % Math symbols such as \mathcal
+\usepackage[hidelinks]{hyperref}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{pythonhighlight}
+\usepackage{subfigure}
+\usepackage{braket}
+\usepackage{filecontents}
+\usepackage{subcaption}% Allows for eps images
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{tikz}
+\usepackage{siunitx}
+\usepackage{tabularx} % Allows for table with custom column width
+\usepackage{lipsum}
+\usepackage{parskip}
+\usepackage{booktabs}
+%\usepackage{mathtools}
+\usepackage[letterpaper,left=1.5in,right=1in,top=1.25in,bottom=1.25in]{geometry}
+\geometry{letterpaper}
+\usepackage [english]{babel}
+\usepackage [autostyle, english = american]{csquotes}
+\usepackage{siunitx}
+\usepackage{float}
+\usepackage{array}
+\usepackage{paralist}
+\usepackage{setspace} % you can control the spacing here
+\onehalfspacing
+% \doublespacing
+\setlength\parindent{24pt}
+\MakeOuterQuote{"} % or letter or a5paper or ... etc
+\usepackage{cite}% \geometry{landscape} % rotated page geometry
+\usepackage{multicol} %allows you to make multiple columned items
+
+
+\title{}
+\author{}
+\date{} % delete this line to display the current date
+
+%%% BEGIN DOCUMENT
+\begin{document}
+\begin{titlepage}
+\centering
+\Large{\textbf{Proton Beam Compression Studies in the Spallation Neutron Source for a 10 TeV Muon Collider}}
+\vspace{10mm}
+
+\Large\textit{\textbf{Inci Karaaslan}} \\
+\vspace{25mm}
+\large{PHYS 33500 Final Report \\ Department of Physics \\ University of Chicago \\2024-2025\\}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.1]{uchicago}
+\end{figure}
+\vspace{1mm}
+\normalsize{Advised by Professor Young-Kee Kim}\\
+
+\vfill
+
+\vspace*{25mm}
+\normalsize{This paper represents my work in accordance with University regulations.}
+\begin{center} 
+\normalsize{/s/ Inci Karaaslan}
+\end{center}
+
+\end{titlepage}
+
+
+
+\newpage
+\pagenumbering{roman}
+
+\tableofcontents
+
+\newpage
+\pagenumbering{arabic}
+\section{A 10 TeV Future Muon Collider}
+\par\noindent More than a decade after the discovery of the Higgs Boson at the Large Hadron Collider at CERN, the new physics implications of the Higgs Boson, among other Beyond the Standard Model observations, motivate the construction of new particle colliders to extend the reach of current proton-proton accelerators. One of the most promising particle candidates for a new collider is muons.
+\subsection{Why Muon Colliders?}
+\par\noindent Muon colliders can be circular and much smaller than current designs of linear electron colliders and hadron colliders with the same effective energy, making them one of the primary candidates for extension to higher energies. This can be attributed to energy loss due to synchrotron radiation being inversely proportional to mass, meaning muons, unlike electrons, generate negligible synchrotron radiation. In addition, the cross-section for direct Higgs production from the $\mu^+\mu^-$ system is 104 times that of a $e^-e^+$ system and the lack of bremsstrahlung allows $\mu^+\mu^-$ collider to operate with a significantly less energy spread, overall allowing for precision measurements of masses and direct measurements of the Higgs width that would otherwise be difficult to almost impossible with electron colliders.
+\subsection{Overview of the Setup}
+\subsection{Proton Driver and Challenges}
+\par\noindent As one of the main proposed future colliders that will allow us to reach energy scales that can probe beyond the Standard Model phenomena, muon colliders come with unique challenges. The challenge concerning this project begins with the first piece of the muon collider complex, the proton complex, consisting of a high-power acceleration section, an accumulator, a compressor, and a target delivery section. Generation of a muon beam through the decay of pions produced from proton-target collision requires short, intense proton bunches with a desired bunch length of 2 ns rms. One of the critical steps then is the compression of a relatively long (in about hundreds of ns, 350 ns for SNS) initial proton bunch to its rather short final length. This leads to an unprecedented, largely unexplored space-charge regime. The proton driver design and simulation must be able to model the beam dynamics in this regime confidently.
+\section{Longitudinal Beam Dynamics: An Introduction}
+\section{Spallation Neutron Source and the Experiment}
+\par\noindent The Spallation Neutron Source (SNS) at Oak Ridge National Laboratories is uniquely positioned to tackle this challenge via testing some of the key bunch formation steps because the formation of these bunches at the front-end proton driver is analogous to the operation of the SNS. SNS is also well-equipped in terms of diagnostics to fully characterize the resulting bunch distribution. 
+\subsection{Overview of SNS}
+\subsection{Project and Goals}
+\par\noindent This project mainly concerns benchmarking and improving proton driver simulation using experimental beam studies of bunch compression. Longitudinal bunch compression is realized in the experiment through the use of radiofrequency (RF) cavities, which rotate a collection of proton particles (bunches) about 90 degrees in the phase space such that the spatial separation between different particles ideally reduces to zero while the energy spread of the bunch is increased. This allows for the bunch to essentially be focused on and around the beam axis, which is a crucial step to produce pions through the proton-target collision efficiently. The bunch length we are attempting to reduce is thus this longitudinal or spatial spread of the bunches. The experimental half of this project is conducted through a series of trips to Oak Ridge National Laboratories to use the 6-hour beam study time with ORNL staff. The simulation half of this project is done in the University of Chicago using pyORBIT, a Python wrapper of ORNL’s own ORBIT code that aims to model SNS. 
+\par\noindent On the experimental end, two out of the three initially planned beam study trips happened between January and February. The first beam study trip simply aimed to get enough data to be able to benchmark the simplest setup where the beam is accumulated in the ring when the RF cavities are turned off, and the beam is stored in the ring with h=1 RF cavities turned on. The idea motivating this experiment was that we could potentially stack each turn (bunch of around 1 us) of bunches without rotating them to fill about ⅔ of the accelerator ring, such that they would then be compressed at the same time using h=1 RF cavities. This process, while rather fundamental, hadn’t been benchmarked by previous pyORBIT simulations. However, the experimental data obtained were unusually noisy, which is likely due to our first beam test being right after a long maintenance period for the SNS. The second beam study then aimed to both look at this basic case study and take data, but also try about 7-8 different case studies where the number of turns injected into the accelerator ring, the RF phase, the RF drive voltage, and the RF voltage ramp delay have been modified. The data taking was successful, which is why we are debating currently if a third beam study for this benchmarking project is required or not, as I have all of the data required for my simulations.
+\par\noindent On the simulation end, there are two main goals: 1) developing the simulation of the ring with all of the injection, accumulation, storage steps as well as all of the space-charge effects are included and 2) maintaining or writing the pyORBIT coding tools required to compare simulations to experimental data. The first prong of this is done for the cases where RF cavities are turned on but aren’t ramped over a significant set of turns and so far without the main space-charge effect (Coulomb repulsion) being considered. The coding tools required for benchmarking are almost done with some debugging left. The next steps for me currently are to see if the first set of rudimentary simulations match our first, also more rudimentary, case studies through the developed coding tools. If so, moving on to the next set of cases and attempting to add in different physical effects will be the next goal. If not, adding in some of the speculated effects to see what exactly are the discrepancies between the experimental and the simulated sets of data will be the next goal instead. At the end of this project, we aim to have benchmarked these cases via simulation, such that experimental ideas that cannot be tried in the physical accelerator ring can be simulated and analyzed.
+\section{Results}
+
+
+\subsection{SNS Control Room Data}
+\subsection{pyORBIT Parameters}
+\subsection{Benchmarking Results and Discussion}
+\section{Conclusion and Future Work}
+
+\addcontentsline{toc}{section}{References/Acknowledgements}
+\bibliographystyle{h-physrev}
+\bibliography{main}
+
+
+
+
+
+\end{document}

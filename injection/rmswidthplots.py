@@ -148,9 +148,24 @@ def direct_rms(x, y):
     return np.sqrt(np.sum(y * (x - mean)**2))
 
 stored_z_vals = []
+zlim_min = 18.0 / 64.0
+zlim_max = 38.0 / 64.0
+zlim_ramp = 100
+zlim_step = (zlim_max - zlim_min) / zlim_ramp
 
 # Track bunch
 for turn in trange(args.turns + 1):       # args.turns + 1
+    # Update longitudinal distribution
+    zlim = min(zlim_max, zlim_min + turn * zlim_step)
+    inj_dist_z = make_inj_dist_z_sns_espread(
+        bunch=bunch,
+        lattice=lattice,
+        esigma=args.energy_spread, 
+        zlim=zlim
+        )
+    
+    inj_node.injectparts.lDistFunc = inj_dist_z
+    
     lattice.trackBunch(bunch)
 
     # Stop injection after user-specified number of turns
@@ -221,5 +236,5 @@ ax.plot(turns, np.asarray(rms_width_exp), color="black", alpha=1.0, label="Exper
 ax.set_ylabel(r"RMS width $\sigma$ [m]")
 ax.set_xlabel("Turn Number")
 ax.legend(loc="upper right", fontsize="x-small")
-plt.savefig(f"./outputs/rmsfig400_{args.experiment}_{args.case}_macros_{args.macros_per_turn}_energy_{args.energy}_spread_{args.energy_spread}_bins_64.png")
+plt.savefig(f"./outputs/rampedrmsfig_{args.experiment}_{args.case}_macros_{args.macros_per_turn}_energy_{args.energy}_spread_{args.energy_spread}_bins_64.png")
 plt.close()

@@ -140,8 +140,24 @@ def simulate_z_profile_for_energy_spread(energy_spread=args.energy_spread):
     )
 
     stored_z_vals = []
+    zlim_min = 18.0 / 64.0
+    zlim_max = 38.0 / 64.0
+    zlim_ramp = 100
+    zlim_step = (zlim_max - zlim_min) / zlim_ramp
+    
     # Track bunch
     for turn in trange(args.turns + 1):       # args.turns + 1
+        # Update longitudinal distribution
+        zlim = min(zlim_max, zlim_min + turn * zlim_step)
+        inj_dist_z = make_inj_dist_z_sns_espread(
+            bunch=bunch,
+            lattice=lattice,
+            esigma=args.energy_spread, 
+            zlim=zlim
+            )
+        
+        inj_node.injectparts.lDistFunc = inj_dist_z
+        
         lattice.trackBunch(bunch)
 
         # Stop injection after user-specified number of turns

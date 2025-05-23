@@ -12,6 +12,7 @@ import xarray as xr
 from omegaconf import OmegaConf
 from omegaconf import DictConfig
 from scipy.constants import speed_of_light
+from scipy.stats import gaussian_kde
 
 from orbit.core.bunch import Bunch
 from orbit.teapot import TEAPOT_Ring
@@ -114,7 +115,7 @@ lattice = model.lattice
 # Add injection node
 inj_dist_x = make_inj_dist_x_joho()
 inj_dist_y = make_inj_dist_y_joho()
-inj_dist_z = inj_dist_z = make_inj_dist_z_sns_espread(
+inj_dist_z = make_inj_dist_z_sns_espread(
     bunch=bunch,
     lattice=lattice,
     esigma=args.energy_spread,
@@ -143,10 +144,26 @@ histo = BunchHistogram2D(
 stored_z_vals = []
 stored_de_vals = []
 
+zlim_min = 18.0 / 64.0
+zlim_max = 38.0 / 64.0
+zlim_ramp = 100
+zlim_step = (zlim_max - zlim_min) / zlim_ramp
+    
 # Track bunch
 for turn in trange(args.turns + 1):       # args.turns + 1
+    # Update longitudinal distribution
+    zlim = min(zlim_max, zlim_min + turn * zlim_step)
+    inj_dist_z = make_inj_dist_z_sns_espread(
+        bunch=bunch,
+        lattice=lattice,
+        esigma=args.energy_spread, 
+        zlim=zlim
+        )
+    
+    inj_node.injectparts.lDistFunc = inj_dist_z
+    
     lattice.trackBunch(bunch)
-
+    
     # Stop injection after user-specified number of turns
     if turn == args.inject_turns:
         inj_node.setnParts(0)  # Remove injection node from the lattice
@@ -165,7 +182,6 @@ for turn in trange(args.turns + 1):       # args.turns + 1
         stored_de_vals.append([de_vals])
 
 # Turn by Turn Plot
-
 for idx, z_data in enumerate(stored_z_vals):
     fig, ax = plt.subplots(figsize=(3.0, 5.0))
     turn = idx * 50
@@ -213,29 +229,44 @@ for idx, z_data in enumerate(stored_z_vals):
     ax.set_xlabel("z [m]")
     ax.legend(loc="upper right", fontsize="x-small")
     
-    plt.savefig(f"./outputs/scsimsout/tryfig_{args.experiment}_{args.case}_turn_profile_{turn:04.0f}_macros_{args.macros_per_turn}_energy_{args.energy}_spread_{args.energy_spread}_bins_64.png")
+    plt.savefig(f"./outputs/scsimsout/rampedfig_{args.experiment}_{args.case}_turn_profile_{turn:04.0f}_macros_{args.macros_per_turn}_energy_{args.energy}_spread_{args.energy_spread}_bins_64.png")
     print(f"Done {turn:04.0f}")
     plt.close()
 
+
 # Turn by Turn Plot 2
-"""for idx, de_data in enumerate(stored_de_vals):
+"""
+for idx, de_data in enumerate(stored_de_vals):
     fig, ax = plt.subplots(1,2, figsize=(12.0, 5.0))
     turn = idx * 50
     z_data = stored_z_vals[idx]
     
     # SIMULATION
     # --------------------------------------------------------------------------------------
-    ax[0].scatter(z_data, de_data, s=2, alpha=0.5)
+    # Assume z_data and de_data are 1D numpy arrays
+    z_data = np.ravel(z_data)
+    de_data = np.ravel(de_data)
+
+    # Calculate the point density
+    xy = np.vstack([z_data, de_data])
+    density = gaussian_kde(xy)(xy)
+
+    # Sort the points by density (for better visualization)
+    idxo = density.argsort()
+    z_data, de_data, density = z_data[idxo], de_data[idxo], density[idxo]
+    sc = ax[0].scatter(z_data, de_data, c=density, cmap='cividis', s=3)
+    plt.colorbar(sc, ax=ax, label='Density')
+    # ax[0].scatter(z_data, de_data, s=2, alpha=0.5)
     ax[0].set_xlabel("z [m]")
     ax[0].set_ylabel("ΔE [GeV]")
     ax[0].set_title(f"Simulation Longitudinal Phase Space (Turn {turn})")
     
-    ax[1].hist(de_vals, bins=64, alpha=0.7, color='b', edgecolor='black') # Histogram of ΔE
+    ax[1].hist(de_data, bins=64, alpha=0.7, color='b', edgecolor='black') # Histogram of ΔE
     ax[1].set_xlabel("ΔE [GeV]")
     ax[1].set_ylabel("Count")
     ax[1].set_title(f"Simulation Energy Spread Histogram (Turn {turn})")
     
-    plt.savefig(f"./outputs/phasesp/fig_{args.experiment}_{args.case}_turn_phase_{turn:04.0f}_macros_{args.macros_per_turn}_energy_{args.energy}_spread_{args.energy_spread}_bins_64.png")
+    plt.savefig(f"./outputs/phasesp/rampedhfig_{args.experiment}_{args.case}_turn_phase_{turn:04.0f}_macros_{args.macros_per_turn}_energy_{args.energy}_spread_{args.energy_spread}_bins_64.png")
     print(f"Done {turn:04.0f}")
     plt.close()
 """

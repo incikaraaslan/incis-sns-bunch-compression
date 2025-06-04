@@ -1,0 +1,5 @@
+# Running simplotslongsc.py or simplotsnosc.py or rmswidthplots.py or optsimplotslongsc.py, all same parameters
+python3 simplotslongsc.py --experiment exp02 --case case01 --rf-voltage1 10 --inject-turns 200 --turns 1150 # the old ver. --inject-turns = 100
+python3 simplotslongsc.py --experiment exp02 --case case02 --rf-voltage1 10 --inject-turns 300 --turns 1150 # the old ver. --inject-turns = 200
+python3 simplotslongsc.py --experiment exp02 --case case03 --rf-voltage1 10 --inject-turns 400 --turns 1150 # the old ver. --inject-turns = 300
+python3 simplotslongsc.py --experiment exp01 # the defaults for the parameters are for exp01 

@@ -17,8 +17,8 @@ packaging==24.2
 pandas==2.2.3
 pillow==11.1.0
 pip==25.0.1
-PyORBIT==3.0.0
-pyorbit-tools @ git+https://github.com/austin-hoover/pyorbit-tools.git@0.0.1
+#PyORBIT==3.0.0
+pyorbit-tools @ git+https://github.com/austin-hoover/pyorbit-tools.git@v0.0.1
 pyparsing==3.2.3
 pyproject-metadata==0.9.1
 PySide6==6.8.3
@@ -30,7 +30,7 @@ setuptools==78.1.0
 setuptools-scm==8.2.0
 shiboken6==6.8.3
 six==1.17.0
-sns-ring-model @ git+https://github.com/austin-hoover/sns-ring-model.git@0.0.1
+sns-ring-model @ git+https://github.com/austin-hoover/sns-ring-model.git@v0.0.1
 tomli==2.2.1
 tornado==6.4.2
 tqdm==4.67.1
